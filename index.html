@@ -5,32 +5,140 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solo para ti ❤️</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #fff5f7; color: #d32f2f; overflow: hidden; }
-        #paso-regalo, #paso-password, #paso-pregunta, #paso-contador { display: none; text-align: center; width: 100%; }
-        #paso-regalo { display: block; }
-        .btn-principal { padding: 20px 40px; font-size: 24px; background-color: #ff4081; color: white; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 10px 20px rgba(255, 64, 129, 0.3); }
-        input[type="text"] { padding: 12px; font-size: 18px; border: 2px solid #ff4081; border-radius: 10px; text-align: center; margin-bottom: 15px; width: 80%; max-width: 300px; }
-        .botones-area { position: relative; height: 350px; margin-top: 30px; width: 100%; }
-        .btn-interactivo { padding: 15px 30px; font-size: 20px; cursor: pointer; border: none; border-radius: 30px; }
-        #btn-si { background-color: #4caf50; color: white; position: relative; z-index: 100; }
-        
-        /* Botón No con coordenadas absolutas para moverse por toda la web */
-        #btn-no { 
-            background-color: #f44336; 
-            color: white; 
-            position: fixed; /* Cambiado a fixed para que use coordenadas de toda la pantalla */
-            z-index: 99;
-            transition: 0.1s; 
+        :root {
+            --color-principal: #ff4081;
+            --color-fondo: #fff5f7;
+            --color-si: #4caf50;
+            --color-no: #f44336;
         }
 
-        .reloj { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
-        .segmento { background: white; padding: 15px; min-width: 60px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .num { font-size: 2rem; font-weight: bold; display: block; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0; 
+            background: var(--color-fondo); 
+            color: #d32f2f; 
+            overflow: hidden; 
+        }
+
+        /* Efecto de corazones de fondo */
+        .heart-bg {
+            position: absolute;
+            top: -10%;
+            font-size: 20px;
+            color: rgba(255, 64, 129, 0.2);
+            animation: float 10s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        #paso-regalo, #paso-password, #paso-pregunta, #paso-contador { 
+            display: none; 
+            text-align: center; 
+            width: 100%; 
+            padding: 20px;
+            animation: aparecer 0.8s ease-out;
+        }
+
+        @keyframes aparecer {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        #paso-regalo { display: block; }
+
+        /* Botones con estilo y animación de pulso */
+        .btn-principal { 
+            padding: 20px 40px; 
+            font-size: 24px; 
+            background-color: var(--color-principal); 
+            color: white; 
+            border: none; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            box-shadow: 0 10px 20px rgba(255, 64, 129, 0.3); 
+            transition: 0.3s;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 10px 20px rgba(255, 64, 129, 0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 15px 30px rgba(255, 64, 129, 0.5); }
+            100% { transform: scale(1); box-shadow: 0 10px 20px rgba(255, 64, 129, 0.3); }
+        }
+
+        input[type="text"] { 
+            padding: 15px; 
+            font-size: 18px; 
+            border: 2px solid var(--color-principal); 
+            border-radius: 15px; 
+            text-align: center; 
+            margin-bottom: 20px; 
+            width: 85%; 
+            max-width: 320px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .botones-area { position: relative; height: 350px; margin-top: 30px; width: 100%; }
+
+        .btn-interactivo { 
+            padding: 15px 35px; 
+            font-size: 20px; 
+            cursor: pointer; 
+            border: none; 
+            border-radius: 30px; 
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        #btn-si { background-color: var(--color-si); color: white; position: relative; z-index: 100; }
+        #btn-si:hover { transform: scale(1.1); background-color: #43a047; }
+        
+        #btn-no { 
+            background-color: var(--color-no); 
+            color: white; 
+            position: fixed; 
+            z-index: 99;
+            transition: 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+
+        /* Reloj Estilizado */
+        .reloj { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; margin-top: 30px; }
+        .segmento { 
+            background: white; 
+            padding: 20px 10px; 
+            min-width: 80px; 
+            border-radius: 20px; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            border-bottom: 4px solid var(--color-principal);
+        }
+        .num { font-size: 2.5rem; font-weight: bold; display: block; color: var(--color-principal); }
+        .label { font-size: 0.8rem; text-transform: uppercase; color: #888; }
+
         #mensaje-revelado { display: none; padding: 20px; animation: fadeIn 2s; }
         @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
     </style>
 </head>
 <body>
+
+    <script>
+        for (let i = 0; i < 15; i++) {
+            let heart = document.createElement('div');
+            heart.className = 'heart-bg';
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDelay = Math.random() * 10 + 's';
+            heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            document.body.appendChild(heart);
+        }
+    </script>
 
     <div id="paso-regalo">
         <button class="btn-principal" onclick="irAPassword()">🎁 Tengo algo para ti...</button>
@@ -41,8 +149,8 @@
         <p>¿Cuál es nuestra palabra mágica?</p>
         <input type="text" id="input-pass" placeholder="Escribe aquí..." onkeypress="if(event.key==='Enter') validarPass()">
         <br>
-        <button class="btn-principal" style="font-size: 16px; padding: 10px 20px;" onclick="validarPass()">Validar</button>
-        <p id="error" style="color: grey; font-size: 14px; display: none;">Casi... inténtalo de nuevo ❤️</p>
+        <button class="btn-principal" style="font-size: 16px; padding: 12px 25px; animation: none;" onclick="validarPass()">Validar</button>
+        <p id="error" style="color: #888; font-size: 14px; display: none; margin-top: 15px;">Casi... inténtalo de nuevo ❤️</p>
     </div>
 
     <div id="paso-pregunta">
@@ -58,15 +166,15 @@
             <h1>¡Beso enviado! ✈️</h1>
             <p>Falta esto para nuestra sorpresa:</p>
             <div class="reloj">
-                <div class="segmento"><span class="num" id="d">00</span>Días</div>
-                <div class="segmento"><span class="num" id="h">00</span>Horas</div>
-                <div class="segmento"><span class="num" id="m">00</span>Min</div>
-                <div class="segmento"><span class="num" id="s">00</span>Seg</div>
+                <div class="segmento"><span class="num" id="d">00</span><span class="label">Días</span></div>
+                <div class="segmento"><span class="num" id="h">00</span><span class="label">Horas</span></div>
+                <div class="segmento"><span class="num" id="m">00</span><span class="label">Minutos</span></div>
+                <div class="segmento"><span class="num" id="s">00</span><span class="label">Segundos</span></div>
             </div>
         </div>
         <div id="mensaje-revelado">
             <h1>✨ MENSAJE SECRETO ✨</h1>
-            <p id="texto-final" style="font-size: 1.5rem;">[Aquí irá tu mensaje especial el día 20]</p>
+            <p id="texto-final" style="font-size: 1.8rem; font-weight: bold; color: var(--color-principal);">[Aquí irá tu mensaje especial el día 20]</p>
         </div>
     </div>
 
@@ -102,44 +210,46 @@
             if (esCorrecto) {
                 document.getElementById('paso-password').style.display = 'none';
                 document.getElementById('paso-pregunta').style.display = 'block';
-                // Colocamos el botón NO en una posición inicial visible pero fuera del SI
                 const btnNo = document.getElementById('btn-no');
-                btnNo.style.top = "60%";
+                btnNo.style.top = "65%";
                 btnNo.style.left = "50%";
+                btnNo.style.transform = "translateX(-50%)";
             } else {
                 document.getElementById('error').style.display = 'block';
+                document.getElementById('error').classList.add('fade-in');
             }
         }
 
-        // Lógica de coordenadas para el botón NO
         function moverNo() {
             const btnNo = document.getElementById('btn-no');
-            // Calculamos coordenadas basadas en el tamaño de la ventana (viewport)
             const nuevaX = Math.random() * (window.innerWidth - btnNo.offsetWidth);
             const nuevaY = Math.random() * (window.innerHeight - btnNo.offsetHeight);
-            
             btnNo.style.left = nuevaX + 'px';
             btnNo.style.top = nuevaY + 'px';
+            btnNo.style.transform = "none";
         }
 
         function irAContador() {
             document.getElementById('paso-pregunta').style.display = 'none';
-            document.getElementById('btn-no').style.display = 'none'; // Quitamos el No
+            document.getElementById('btn-no').style.display = 'none';
             document.getElementById('paso-contador').style.display = 'block';
             
             const meta = new Date('February 20, 2026 13:15:00').getTime();
             const x = setInterval(() => {
                 const ahora = new Date().getTime();
                 const diff = meta - ahora;
+                
                 if (diff <= 0) {
                     clearInterval(x);
                     document.getElementById('reloj-visible').style.display = 'none';
                     document.getElementById('mensaje-revelado').style.display = 'block';
+                    return;
                 }
-                document.getElementById('d').innerText = Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
-                document.getElementById('h').innerText = Math.max(0, Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
-                document.getElementById('m').innerText = Math.max(0, Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)));
-                document.getElementById('s').innerText = Math.max(0, Math.floor((diff % (1000 * 60)) / 1000));
+                
+                document.getElementById('d').innerText = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+                document.getElementById('h').innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+                document.getElementById('m').innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+                document.getElementById('s').innerText = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
             }, 1000);
         }
     </script>

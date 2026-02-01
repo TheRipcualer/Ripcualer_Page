@@ -34,7 +34,6 @@
             border-radius: 50px;
             cursor: pointer;
             box-shadow: 0 10px 20px rgba(255, 64, 129, 0.3);
-            transition: 0.3s;
         }
 
         input[type="text"] {
@@ -46,10 +45,9 @@
             margin-bottom: 15px;
         }
 
-        /* Área del juego */
         .botones-area { 
             position: relative; 
-            height: 300px; 
+            height: 400px; 
             margin-top: 30px; 
         }
 
@@ -59,30 +57,34 @@
             cursor: pointer;
             border: none;
             border-radius: 30px;
-            transition: transform 0.2s ease, opacity 0.2s ease;
         }
 
-        #btn-si { background-color: #4caf50; color: white; z-index: 10; }
+        #btn-si { background-color: #4caf50; color: white; position: relative; z-index: 100; }
         
-        /* El botón "No" Ninja */
         #btn-no { 
             background-color: #f44336; 
             color: white; 
             position: absolute; 
             left: 55%;
+            transition: 0.1s; /* Salto rápido */
         }
 
         .reloj { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
         .segmento { background: white; padding: 15px; min-width: 60px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .num { font-size: 2rem; font-weight: bold; display: block; }
 
-        .fade-in { animation: fadeIn 0.8s forwards; }
+        #mensaje-revelado {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 2s;
+        }
+
         @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
     </style>
 </head>
 <body>
 
-    <div id="paso-regalo" class="fade-in">
+    <div id="paso-regalo">
         <button class="btn-principal" onclick="irAPassword()">🎁 Tengo algo para ti...</button>
     </div>
 
@@ -99,18 +101,24 @@
         <h1>¿Un beso telepático? 😘</h1>
         <div class="botones-area">
             <button id="btn-si" class="btn-interactivo" onclick="irAContador()">¡SÍ! ❤️</button>
-            <button id="btn-no" class="btn-interactivo">No 😜</button>
+            <button id="btn-no" class="btn-interactivo" onclick="moverNo()">No 😜</button>
         </div>
     </div>
 
     <div id="paso-contador">
-        <h1>¡Beso enviado! ✈️</h1>
-        <p>Ahora solo falta esperar a vernos:</p>
-        <div class="reloj">
-            <div class="segmento"><span class="num" id="d">00</span>Días</div>
-            <div class="segmento"><span class="num" id="h">00</span>Horas</div>
-            <div class="segmento"><span class="num" id="m">00</span>Min</div>
-            <div class="segmento"><span class="num" id="s">00</span>Seg</div>
+        <div id="reloj-visible">
+            <h1>¡Beso enviado! ✈️</h1>
+            <p>Falta esto para nuestra sorpresa:</p>
+            <div class="reloj">
+                <div class="segmento"><span class="num" id="d">00</span>Días</div>
+                <div class="segmento"><span class="num" id="h">00</span>Horas</div>
+                <div class="segmento"><span class="num" id="m">00</span>Min</div>
+                <div class="segmento"><span class="num" id="s">00</span>Seg</div>
+            </div>
+        </div>
+        <div id="mensaje-revelado">
+            <h1>✨ SORPRESA FINAL ✨</h1>
+            <p style="font-size: 1.5rem;">[Aquí aparecerá tu mensaje especial]</p>
         </div>
     </div>
 
@@ -118,7 +126,6 @@
         function irAPassword() {
             document.getElementById('paso-regalo').style.display = 'none';
             document.getElementById('paso-password').style.display = 'block';
-            document.getElementById('paso-password').classList.add('fade-in');
         }
 
         function validarPass() {
@@ -126,56 +133,41 @@
             if (pass === "t'estimo") {
                 document.getElementById('paso-password').style.display = 'none';
                 document.getElementById('paso-pregunta').style.display = 'block';
-                document.getElementById('paso-pregunta').classList.add('fade-in');
             } else {
                 document.getElementById('error').style.display = 'block';
             }
         }
 
-        // LÓGICA DEL BOTÓN "NO" NINJA
-        const btnNo = document.getElementById('btn-no');
-        let escala = 1;
-
-        btnNo.addEventListener('mouseover', saltar);
-        btnNo.addEventListener('click', saltar); // Por si lo intenta tocar rápido
-
-        function saltar() {
-            // Desaparece un momento
-            btnNo.style.opacity = '0';
-            
-            setTimeout(() => {
-                // Calcula nueva posición
-                const x = Math.random() * (window.innerWidth - 120);
-                const y = Math.random() * (window.innerHeight - 80);
-                
-                // Reduce el tamaño
-                escala -= 0.1;
-                if (escala < 0.3) escala = 0.5; // No deja que desaparezca del todo para que siga el juego
-
-                btnNo.style.left = x + 'px';
-                btnNo.style.top = y + 'px';
-                btnNo.style.transform = `scale(${escala})`;
-                
-                // Reaparece en el nuevo lugar
-                btnNo.style.opacity = '1';
-            }, 100);
+        function moverNo() {
+            const btnNo = document.getElementById('btn-no');
+            // Calcula posiciones aleatorias evitando que se salga de la pantalla
+            const x = Math.random() * (window.innerWidth - 150);
+            const y = Math.random() * (window.innerHeight - 100);
+            btnNo.style.left = x + 'px';
+            btnNo.style.top = y + 'px';
         }
 
         function irAContador() {
             document.getElementById('paso-pregunta').style.display = 'none';
             document.getElementById('paso-contador').style.display = 'block';
-            document.getElementById('paso-contador').classList.add('fade-in');
             
+            // FECHA: 20 de Febrero 13:15
             const meta = new Date('February 20, 2026 13:15:00').getTime();
             
-            setInterval(() => {
+            const x = setInterval(() => {
                 const ahora = new Date().getTime();
                 const diff = meta - ahora;
                 
-                document.getElementById('d').innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
-                document.getElementById('h').innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                document.getElementById('m').innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                document.getElementById('s').innerText = Math.floor((diff % (1000 * 60)) / 1000);
+                if (diff <= 0) {
+                    clearInterval(x);
+                    document.getElementById('reloj-visible').style.display = 'none';
+                    document.getElementById('mensaje-revelado').style.display = 'block';
+                }
+
+                document.getElementById('d').innerText = Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
+                document.getElementById('h').innerText = Math.max(0, Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
+                document.getElementById('m').innerText = Math.max(0, Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)));
+                document.getElementById('s').innerText = Math.max(0, Math.floor((diff % (1000 * 60)) / 1000));
             }, 1000);
         }
     </script>

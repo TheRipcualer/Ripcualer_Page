@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solo para tus ojos</title>
+    <title>Solo para ti ❤️</title>
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -17,17 +17,14 @@
             overflow: hidden;
         }
 
-        /* Contenedores */
         #paso-regalo, #paso-password, #paso-pregunta, #paso-contador {
             display: none;
             text-align: center;
             width: 100%;
         }
 
-        /* Mostrar el primer paso al cargar */
         #paso-regalo { display: block; }
 
-        /* Botones y Estilos */
         .btn-principal {
             padding: 20px 40px;
             font-size: 24px;
@@ -37,6 +34,7 @@
             border-radius: 50px;
             cursor: pointer;
             box-shadow: 0 10px 20px rgba(255, 64, 129, 0.3);
+            transition: 0.3s;
         }
 
         input[type="text"] {
@@ -44,26 +42,36 @@
             font-size: 18px;
             border: 2px solid #ff4081;
             border-radius: 10px;
-            outline: none;
-            margin-bottom: 15px;
             text-align: center;
+            margin-bottom: 15px;
         }
 
-        .botones-area { position: relative; height: 200px; margin-top: 30px; }
+        /* Área del juego */
+        .botones-area { 
+            position: relative; 
+            height: 300px; 
+            margin-top: 30px; 
+        }
 
         .btn-interactivo {
-            padding: 12px 25px;
-            font-size: 18px;
+            padding: 15px 30px;
+            font-size: 20px;
             cursor: pointer;
             border: none;
-            border-radius: 20px;
-            transition: all 0.2s ease;
+            border-radius: 30px;
+            transition: transform 0.2s ease, opacity 0.2s ease;
         }
 
-        #btn-si { background-color: #4caf50; color: white; }
-        #btn-no { background-color: #f44336; color: white; position: absolute; left: 55%; }
+        #btn-si { background-color: #4caf50; color: white; z-index: 10; }
+        
+        /* El botón "No" Ninja */
+        #btn-no { 
+            background-color: #f44336; 
+            color: white; 
+            position: absolute; 
+            left: 55%;
+        }
 
-        /* Reloj */
         .reloj { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
         .segmento { background: white; padding: 15px; min-width: 60px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .num { font-size: 2rem; font-weight: bold; display: block; }
@@ -79,16 +87,16 @@
     </div>
 
     <div id="paso-password">
-        <h1>Esta sorpresa tiene candado 🔒</h1>
+        <h1>🔒 Acceso restringido</h1>
         <p>¿Cuál es nuestra palabra mágica?</p>
         <input type="text" id="input-pass" placeholder="Escribe aquí...">
         <br>
-        <button class="btn-principal" style="font-size: 16px; padding: 10px 20px;" onclick="validarPass()">Abrir</button>
-        <p id="error" style="color: grey; font-size: 14px; display: none;">Casi... inténtalo de nuevo ❤️</p>
+        <button class="btn-principal" style="font-size: 16px; padding: 10px 20px;" onclick="validarPass()">Validar</button>
+        <p id="error" style="color: grey; font-size: 14px; display: none;">Inténtalo de nuevo, amor ❤️</p>
     </div>
 
     <div id="paso-pregunta">
-        <h1>¿Me das un besito virtual? 😘</h1>
+        <h1>¿Un beso telepático? 😘</h1>
         <div class="botones-area">
             <button id="btn-si" class="btn-interactivo" onclick="irAContador()">¡SÍ! ❤️</button>
             <button id="btn-no" class="btn-interactivo">No 😜</button>
@@ -96,19 +104,17 @@
     </div>
 
     <div id="paso-contador">
-        <h1>¡Sabía que dirías que sí! ❤️</h1>
-        <p>Faltan exactamente:</p>
+        <h1>¡Beso enviado! ✈️</h1>
+        <p>Ahora solo falta esperar a vernos:</p>
         <div class="reloj">
             <div class="segmento"><span class="num" id="d">00</span>Días</div>
             <div class="segmento"><span class="num" id="h">00</span>Horas</div>
             <div class="segmento"><span class="num" id="m">00</span>Min</div>
             <div class="segmento"><span class="num" id="s">00</span>Seg</div>
         </div>
-        <p style="margin-top: 20px;">Para el 20 de febrero a las 13:15</p>
     </div>
 
     <script>
-        // Transiciones
         function irAPassword() {
             document.getElementById('paso-regalo').style.display = 'none';
             document.getElementById('paso-password').style.display = 'block';
@@ -117,7 +123,6 @@
 
         function validarPass() {
             const pass = document.getElementById('input-pass').value.trim().toLowerCase();
-            // Validamos "t'estimo" (en minúsculas por el .toLowerCase())
             if (pass === "t'estimo") {
                 document.getElementById('paso-password').style.display = 'none';
                 document.getElementById('paso-pregunta').style.display = 'block';
@@ -127,25 +132,35 @@
             }
         }
 
-        // Lógica botón escurridizo
+        // LÓGICA DEL BOTÓN "NO" NINJA
         const btnNo = document.getElementById('btn-no');
         let escala = 1;
 
-        btnNo.onmouseover = () => {
-            const x = Math.random() * (window.innerWidth - 100);
-            const y = Math.random() * (window.innerHeight - 100);
-            btnNo.style.left = x + 'px';
-            btnNo.style.top = y + 'px';
-            
-            escala -= 0.15;
-            if(escala > 0.2) {
-                btnNo.style.transform = `scale(${escala})`;
-            } else {
-                btnNo.style.opacity = '0';
-            }
-        };
+        btnNo.addEventListener('mouseover', saltar);
+        btnNo.addEventListener('click', saltar); // Por si lo intenta tocar rápido
 
-        // Contador
+        function saltar() {
+            // Desaparece un momento
+            btnNo.style.opacity = '0';
+            
+            setTimeout(() => {
+                // Calcula nueva posición
+                const x = Math.random() * (window.innerWidth - 120);
+                const y = Math.random() * (window.innerHeight - 80);
+                
+                // Reduce el tamaño
+                escala -= 0.1;
+                if (escala < 0.3) escala = 0.5; // No deja que desaparezca del todo para que siga el juego
+
+                btnNo.style.left = x + 'px';
+                btnNo.style.top = y + 'px';
+                btnNo.style.transform = `scale(${escala})`;
+                
+                // Reaparece en el nuevo lugar
+                btnNo.style.opacity = '1';
+            }, 100);
+        }
+
         function irAContador() {
             document.getElementById('paso-pregunta').style.display = 'none';
             document.getElementById('paso-contador').style.display = 'block';

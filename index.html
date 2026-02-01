@@ -5,16 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solo para ti ❤️</title>
     <style>
-        /* (Mantenemos los estilos anteriores) */
         body { font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #fff5f7; color: #d32f2f; overflow: hidden; }
         #paso-regalo, #paso-password, #paso-pregunta, #paso-contador { display: none; text-align: center; width: 100%; }
         #paso-regalo { display: block; }
         .btn-principal { padding: 20px 40px; font-size: 24px; background-color: #ff4081; color: white; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 10px 20px rgba(255, 64, 129, 0.3); }
         input[type="text"] { padding: 12px; font-size: 18px; border: 2px solid #ff4081; border-radius: 10px; text-align: center; margin-bottom: 15px; width: 80%; max-width: 300px; }
-        .botones-area { position: relative; height: 350px; margin-top: 30px; }
+        .botones-area { position: relative; height: 350px; margin-top: 30px; width: 100%; }
         .btn-interactivo { padding: 15px 30px; font-size: 20px; cursor: pointer; border: none; border-radius: 30px; }
         #btn-si { background-color: #4caf50; color: white; position: relative; z-index: 100; }
-        #btn-no { background-color: #f44336; color: white; position: absolute; left: 55%; transition: 0.1s; }
+        
+        /* Botón No con coordenadas absolutas para moverse por toda la web */
+        #btn-no { 
+            background-color: #f44336; 
+            color: white; 
+            position: fixed; /* Cambiado a fixed para que use coordenadas de toda la pantalla */
+            z-index: 99;
+            transition: 0.1s; 
+        }
+
         .reloj { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
         .segmento { background: white; padding: 15px; min-width: 60px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .num { font-size: 2rem; font-weight: bold; display: block; }
@@ -30,7 +38,7 @@
 
     <div id="paso-password">
         <h1>🔒 Acceso restringido</h1>
-        <p>¿Cuál es la palabra que nunca dices?</p>
+        <p>¿Cuál es nuestra palabra mágica?</p>
         <input type="text" id="input-pass" placeholder="Escribe aquí..." onkeypress="if(event.key==='Enter') validarPass()">
         <br>
         <button class="btn-principal" style="font-size: 16px; padding: 10px 20px;" onclick="validarPass()">Validar</button>
@@ -48,7 +56,7 @@
     <div id="paso-contador">
         <div id="reloj-visible">
             <h1>¡Beso enviado! ✈️</h1>
-            <p>Falta esto para la sorpresa:</p>
+            <p>Falta esto para nuestra sorpresa:</p>
             <div class="reloj">
                 <div class="segmento"><span class="num" id="d">00</span>Días</div>
                 <div class="segmento"><span class="num" id="h">00</span>Horas</div>
@@ -63,7 +71,6 @@
     </div>
 
     <script>
-        // --- CONFIGURACIÓN ---
         const frasesValidas = ["t'estimo", "te quiero mucho", "tqm", "te estimo"];
         
         function irAPassword() {
@@ -71,18 +78,12 @@
             document.getElementById('paso-password').style.display = 'block';
         }
 
-        // Función para permitir pequeños errores (Levenshtein Distance light)
         function esSimilar(s1, s2) {
             s1 = s1.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
             s2 = s2.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-            
             if (s1 === s2) return true;
-            
-            // Si la palabra es muy corta (tqm), no permitimos errores
             if (s1.length < 4) return s1 === s2;
-
-            let errores = 0;
-            let i = 0, j = 0;
+            let errores = 0, i = 0, j = 0;
             while (i < s1.length && j < s2.length) {
                 if (s1[i] !== s2[j]) {
                     errores++;
@@ -92,45 +93,49 @@
                 } else { i++; j++; }
             }
             errores += (s1.length - i) + (s2.length - j);
-            return errores <= 2; // Permite hasta 2 letras de diferencia
+            return errores <= 2;
         }
 
         function validarPass() {
             const input = document.getElementById('input-pass').value;
             const esCorrecto = frasesValidas.some(frase => esSimilar(input, frase));
-
             if (esCorrecto) {
                 document.getElementById('paso-password').style.display = 'none';
                 document.getElementById('paso-pregunta').style.display = 'block';
+                // Colocamos el botón NO en una posición inicial visible pero fuera del SI
+                const btnNo = document.getElementById('btn-no');
+                btnNo.style.top = "60%";
+                btnNo.style.left = "50%";
             } else {
                 document.getElementById('error').style.display = 'block';
             }
         }
 
+        // Lógica de coordenadas para el botón NO
         function moverNo() {
             const btnNo = document.getElementById('btn-no');
-            const x = Math.random() * (window.innerWidth - 150);
-            const y = Math.random() * (window.innerHeight - 100);
-            btnNo.style.left = x + 'px';
-            btnNo.style.top = y + 'px';
+            // Calculamos coordenadas basadas en el tamaño de la ventana (viewport)
+            const nuevaX = Math.random() * (window.innerWidth - btnNo.offsetWidth);
+            const nuevaY = Math.random() * (window.innerHeight - btnNo.offsetHeight);
+            
+            btnNo.style.left = nuevaX + 'px';
+            btnNo.style.top = nuevaY + 'px';
         }
 
         function irAContador() {
             document.getElementById('paso-pregunta').style.display = 'none';
+            document.getElementById('btn-no').style.display = 'none'; // Quitamos el No
             document.getElementById('paso-contador').style.display = 'block';
             
             const meta = new Date('February 20, 2026 13:15:00').getTime();
-            
             const x = setInterval(() => {
                 const ahora = new Date().getTime();
                 const diff = meta - ahora;
-                
                 if (diff <= 0) {
                     clearInterval(x);
                     document.getElementById('reloj-visible').style.display = 'none';
                     document.getElementById('mensaje-revelado').style.display = 'block';
                 }
-
                 document.getElementById('d').innerText = Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
                 document.getElementById('h').innerText = Math.max(0, Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
                 document.getElementById('m').innerText = Math.max(0, Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)));

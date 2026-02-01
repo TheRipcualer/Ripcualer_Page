@@ -3,82 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luisa ❤️</title>
+    <title>Solo para ti ❤️</title>
     <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background: #fff5f7;
-            color: #d32f2f;
-            overflow: hidden;
-        }
-
-        #paso-regalo, #paso-password, #paso-pregunta, #paso-contador {
-            display: none;
-            text-align: center;
-            width: 100%;
-        }
-
+        /* (Mantenemos los estilos anteriores) */
+        body { font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #fff5f7; color: #d32f2f; overflow: hidden; }
+        #paso-regalo, #paso-password, #paso-pregunta, #paso-contador { display: none; text-align: center; width: 100%; }
         #paso-regalo { display: block; }
-
-        .btn-principal {
-            padding: 20px 40px;
-            font-size: 24px;
-            background-color: #ff4081;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 10px 20px rgba(255, 64, 129, 0.3);
-        }
-
-        input[type="text"] {
-            padding: 12px;
-            font-size: 18px;
-            border: 2px solid #ff4081;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-
-        .botones-area { 
-            position: relative; 
-            height: 400px; 
-            margin-top: 30px; 
-        }
-
-        .btn-interactivo {
-            padding: 15px 30px;
-            font-size: 20px;
-            cursor: pointer;
-            border: none;
-            border-radius: 30px;
-        }
-
+        .btn-principal { padding: 20px 40px; font-size: 24px; background-color: #ff4081; color: white; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 10px 20px rgba(255, 64, 129, 0.3); }
+        input[type="text"] { padding: 12px; font-size: 18px; border: 2px solid #ff4081; border-radius: 10px; text-align: center; margin-bottom: 15px; width: 80%; max-width: 300px; }
+        .botones-area { position: relative; height: 350px; margin-top: 30px; }
+        .btn-interactivo { padding: 15px 30px; font-size: 20px; cursor: pointer; border: none; border-radius: 30px; }
         #btn-si { background-color: #4caf50; color: white; position: relative; z-index: 100; }
-        
-        #btn-no { 
-            background-color: #f44336; 
-            color: white; 
-            position: absolute; 
-            left: 55%;
-            transition: 0.1s; /* Salto rápido */
-        }
-
+        #btn-no { background-color: #f44336; color: white; position: absolute; left: 55%; transition: 0.1s; }
         .reloj { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
         .segmento { background: white; padding: 15px; min-width: 60px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .num { font-size: 2rem; font-weight: bold; display: block; }
-
-        #mensaje-revelado {
-            display: none;
-            padding: 20px;
-            animation: fadeIn 2s;
-        }
-
+        #mensaje-revelado { display: none; padding: 20px; animation: fadeIn 2s; }
         @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
     </style>
 </head>
@@ -90,11 +30,11 @@
 
     <div id="paso-password">
         <h1>🔒 Acceso restringido</h1>
-        <p>¿Cuál es la palabra que nunca dices ?</p>
-        <input type="text" id="input-pass" placeholder="Escribe aquí...">
+        <p>¿Cuál es la palabra que nunca dices?</p>
+        <input type="text" id="input-pass" placeholder="Escribe aquí..." onkeypress="if(event.key==='Enter') validarPass()">
         <br>
         <button class="btn-principal" style="font-size: 16px; padding: 10px 20px;" onclick="validarPass()">Validar</button>
-        <p id="error" style="color: grey; font-size: 14px; display: none;">Inténtalo de nuevo, amor ❤️</p>
+        <p id="error" style="color: grey; font-size: 14px; display: none;">Casi... inténtalo de nuevo ❤️</p>
     </div>
 
     <div id="paso-pregunta">
@@ -117,20 +57,49 @@
             </div>
         </div>
         <div id="mensaje-revelado">
-            <h1>✨ SORPRESA FINAL ✨</h1>
-            <p style="font-size: 1.5rem;">[Aquí aparecerá tu mensaje especial]</p>
+            <h1>✨ MENSAJE SECRETO ✨</h1>
+            <p id="texto-final" style="font-size: 1.5rem;">[Aquí irá tu mensaje especial el día 20]</p>
         </div>
     </div>
 
     <script>
+        // --- CONFIGURACIÓN ---
+        const frasesValidas = ["t'estimo", "te quiero mucho", "tqm", "te estimo"];
+        
         function irAPassword() {
             document.getElementById('paso-regalo').style.display = 'none';
             document.getElementById('paso-password').style.display = 'block';
         }
 
+        // Función para permitir pequeños errores (Levenshtein Distance light)
+        function esSimilar(s1, s2) {
+            s1 = s1.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+            s2 = s2.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+            
+            if (s1 === s2) return true;
+            
+            // Si la palabra es muy corta (tqm), no permitimos errores
+            if (s1.length < 4) return s1 === s2;
+
+            let errores = 0;
+            let i = 0, j = 0;
+            while (i < s1.length && j < s2.length) {
+                if (s1[i] !== s2[j]) {
+                    errores++;
+                    if (s1.length > s2.length) i++;
+                    else if (s2.length > s1.length) j++;
+                    else { i++; j++; }
+                } else { i++; j++; }
+            }
+            errores += (s1.length - i) + (s2.length - j);
+            return errores <= 2; // Permite hasta 2 letras de diferencia
+        }
+
         function validarPass() {
-            const pass = document.getElementById('input-pass').value.trim().toLowerCase();
-            if (pass === "Te quiero") {
+            const input = document.getElementById('input-pass').value;
+            const esCorrecto = frasesValidas.some(frase => esSimilar(input, frase));
+
+            if (esCorrecto) {
                 document.getElementById('paso-password').style.display = 'none';
                 document.getElementById('paso-pregunta').style.display = 'block';
             } else {
@@ -140,7 +109,6 @@
 
         function moverNo() {
             const btnNo = document.getElementById('btn-no');
-            // Calcula posiciones aleatorias evitando que se salga de la pantalla
             const x = Math.random() * (window.innerWidth - 150);
             const y = Math.random() * (window.innerHeight - 100);
             btnNo.style.left = x + 'px';
@@ -151,7 +119,6 @@
             document.getElementById('paso-pregunta').style.display = 'none';
             document.getElementById('paso-contador').style.display = 'block';
             
-            // FECHA: 20 de Febrero 13:15
             const meta = new Date('February 20, 2026 13:15:00').getTime();
             
             const x = setInterval(() => {
@@ -173,7 +140,3 @@
     </script>
 </body>
 </html>
-
-
-
-

@@ -90,7 +90,7 @@
 
     <div id="paso-password">
         <h1>🔒 Acceso restringido</h1>
-        <p>¿Cuál es nuestra palabra mágica?</p>
+        <p>¿Cuál es la palabra que nunca dices ?</p>
         <input type="text" id="input-pass" placeholder="Escribe aquí...">
         <br>
         <button class="btn-principal" style="font-size: 16px; padding: 10px 20px;" onclick="validarPass()">Validar</button>
@@ -130,7 +130,7 @@
 
         function validarPass() {
             const pass = document.getElementById('input-pass').value.trim().toLowerCase();
-            if (pass === "T'estimo") {
+            if (pass === "Te quiero") {
                 document.getElementById('paso-password').style.display = 'none';
                 document.getElementById('paso-pregunta').style.display = 'block';
             } else {
@@ -173,6 +173,7 @@
     </script>
 </body>
 </html>
+
 
 
 

@@ -199,8 +199,176 @@
 
     </div>
 
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solo para tus ojos</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: #fff5f7;
+            color: #d32f2f;
+            overflow: hidden;
+        }
+
+        /* Contenedores */
+        #paso-regalo, #paso-password, #paso-pregunta, #paso-contador {
+            display: none;
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Mostrar el primer paso al cargar */
+        #paso-regalo { display: block; }
+
+        /* Botones y Estilos */
+        .btn-principal {
+            padding: 20px 40px;
+            font-size: 24px;
+            background-color: #ff4081;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(255, 64, 129, 0.3);
+        }
+
+        input[type="text"] {
+            padding: 12px;
+            font-size: 18px;
+            border: 2px solid #ff4081;
+            border-radius: 10px;
+            outline: none;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .botones-area { position: relative; height: 200px; margin-top: 30px; }
+
+        .btn-interactivo {
+            padding: 12px 25px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 20px;
+            transition: all 0.2s ease;
+        }
+
+        #btn-si { background-color: #4caf50; color: white; }
+        #btn-no { background-color: #f44336; color: white; position: absolute; left: 55%; }
+
+        /* Reloj */
+        .reloj { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
+        .segmento { background: white; padding: 15px; min-width: 60px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .num { font-size: 2rem; font-weight: bold; display: block; }
+
+        .fade-in { animation: fadeIn 0.8s forwards; }
+        @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+    </style>
+</head>
+<body>
+
+    <div id="paso-regalo" class="fade-in">
+        <button class="btn-principal" onclick="irAPassword()">🎁 Tengo algo para ti...</button>
+    </div>
+
+    <div id="paso-password">
+        <h1>Esta sorpresa tiene candado 🔒</h1>
+        <p>¿Cuál es nuestra palabra mágica?</p>
+        <input type="text" id="input-pass" placeholder="Escribe aquí...">
+        <br>
+        <button class="btn-principal" style="font-size: 16px; padding: 10px 20px;" onclick="validarPass()">Abrir</button>
+        <p id="error" style="color: grey; font-size: 14px; display: none;">Casi... inténtalo de nuevo ❤️</p>
+    </div>
+
+    <div id="paso-pregunta">
+        <h1>¿Me das un besito virtual? 😘</h1>
+        <div class="botones-area">
+            <button id="btn-si" class="btn-interactivo" onclick="irAContador()">¡SÍ! ❤️</button>
+            <button id="btn-no" class="btn-interactivo">No 😜</button>
+        </div>
+    </div>
+
+    <div id="paso-contador">
+        <h1>¡Sabía que dirías que sí! ❤️</h1>
+        <p>Faltan exactamente:</p>
+        <div class="reloj">
+            <div class="segmento"><span class="num" id="d">00</span>Días</div>
+            <div class="segmento"><span class="num" id="h">00</span>Horas</div>
+            <div class="segmento"><span class="num" id="m">00</span>Min</div>
+            <div class="segmento"><span class="num" id="s">00</span>Seg</div>
+        </div>
+        <p style="margin-top: 20px;">Para el 20 de febrero a las 13:15</p>
+    </div>
+
+    <script>
+        // Transiciones
+        function irAPassword() {
+            document.getElementById('paso-regalo').style.display = 'none';
+            document.getElementById('paso-password').style.display = 'block';
+            document.getElementById('paso-password').classList.add('fade-in');
+        }
+
+        function validarPass() {
+            const pass = document.getElementById('input-pass').value.trim().toLowerCase();
+            // Validamos "t'estimo" (en minúsculas por el .toLowerCase())
+            if (pass === "t'estimo") {
+                document.getElementById('paso-password').style.display = 'none';
+                document.getElementById('paso-pregunta').style.display = 'block';
+                document.getElementById('paso-pregunta').classList.add('fade-in');
+            } else {
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+
+        // Lógica botón escurridizo
+        const btnNo = document.getElementById('btn-no');
+        let escala = 1;
+
+        btnNo.onmouseover = () => {
+            const x = Math.random() * (window.innerWidth - 100);
+            const y = Math.random() * (window.innerHeight - 100);
+            btnNo.style.left = x + 'px';
+            btnNo.style.top = y + 'px';
+            
+            escala -= 0.15;
+            if(escala > 0.2) {
+                btnNo.style.transform = `scale(${escala})`;
+            } else {
+                btnNo.style.opacity = '0';
+            }
+        };
+
+        // Contador
+        function irAContador() {
+            document.getElementById('paso-pregunta').style.display = 'none';
+            document.getElementById('paso-contador').style.display = 'block';
+            document.getElementById('paso-contador').classList.add('fade-in');
+            
+            const meta = new Date('February 20, 2026 13:15:00').getTime();
+            
+            setInterval(() => {
+                const ahora = new Date().getTime();
+                const diff = meta - ahora;
+                
+                document.getElementById('d').innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
+                document.getElementById('h').innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                document.getElementById('m').innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                document.getElementById('s').innerText = Math.floor((diff % (1000 * 60)) / 1000);
+            }, 1000);
+        }
+    </script>
+    
+    
 </body>
 </html>
+
 
 
 
